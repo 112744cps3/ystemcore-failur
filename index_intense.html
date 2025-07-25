@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SYSTEM FAILURE</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      overflow: hidden;
+      font-family: monospace;
+      color: #0f0;
+    }
+
+    body.flash {
+      animation: flashBG 0.1s infinite alternate;
+    }
+
+    @keyframes flashBG {
+      from { background: black; }
+      to { background: red; }
+    }
+
+    .terminal {
+      padding: 20px;
+      height: 100vh;
+      overflow-y: auto;
+      font-size: 13px;
+      line-height: 1.2;
+      color: #00ff00;
+    }
+
+    .log {
+      animation: flicker 0.05s infinite alternate;
+    }
+
+    @keyframes flicker {
+      0% { opacity: 1; }
+      50% { opacity: 0.6; }
+      100% { opacity: 1; }
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(255, 0, 0, 0.1);
+      pointer-events: none;
+      z-index: 9999;
+      mix-blend-mode: difference;
+    }
+  </style>
+</head>
+<body class="flash">
+<div class="overlay"></div>
+<div class="terminal" id="terminal">
+<span class="log">[SYSTEM BREACH DETECTED]</span><br>
+</div>
+
+<audio autoplay loop>
+  <source src="https://www.myinstants.com/media/sounds/error_1.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+  const terminal = document.getElementById('terminal');
+  const logs = [];
+  const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+=-";
+  for (let i = 0; i < 1000; i++) {
+    let line = "";
+    for (let j = 0; j < 80; j++) {
+      line += charset.charAt(Math.floor(Math.random() * charset.length));
+    }
+    logs.push("[SYS] " + line);
+  }
+
+  let i = 0;
+  const interval = setInterval(() => {
+    if (i < logs.length) {
+      const logLine = document.createElement('div');
+      logLine.className = 'log';
+      logLine.textContent = logs[i++];
+      terminal.appendChild(logLine);
+      terminal.scrollTop = terminal.scrollHeight;
+    } else {
+      clearInterval(interval);
+    }
+  }, 20); // extremely fast log dumping
+
+  // Trap for 30 seconds
+  let trapEnd = Date.now() + 30000;
+  window.onbeforeunload = function () {
+    if (Date.now() < trapEnd) return "WARNING: Closing now may cause data corruption!";
+  };
+
+  // Remove trap after 30 seconds
+  setTimeout(() => {
+    window.onbeforeunload = null;
+    alert("😈 The system is beyond repair. Enjoy the memes.");
+  }, 30000);
+</script>
+</body>
+</html>
